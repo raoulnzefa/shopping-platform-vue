@@ -2,10 +2,14 @@
   <div class="slider-wrap" v-if="slidersInfo" @mouseenter="shopPaly" @mouseleave="autoPaly">
     <div class="slider">
       <transition name="slide">
-        <img v-if="isShow" :src="slidersInfo[currentIndex].imgUrl" alt="">
+        <router-link class="slide-pic-container"  v-if="isShow" :to="{name:slidersInfo[currentIndex].pathName}">
+          <img :src="slidersInfo[currentIndex].imgUrl" alt="">
+        </router-link>
       </transition>
       <transition name="slide-old">
-        <img v-if="!isShow" :src="slidersInfo[currentIndex].imgUrl" alt="">
+        <router-link  class="slide-pic-container" v-if="!isShow" :to="{name:slidersInfo[currentIndex].pathName}">
+          <img :src="slidersInfo[currentIndex].imgUrl" alt="">
+        </router-link>
       </transition>
     </div>
     <!-- 遮罩 -->
@@ -120,6 +124,10 @@ export default {
 .slider-wrap .shade-right a.active {
   color: #fff;
   text-decoration: underline;
+}
+.slide-pic-container {
+  display: block;
+  float: left;
 }
 /* 滑动样式 */
 .slide-enter {

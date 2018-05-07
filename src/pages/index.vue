@@ -13,7 +13,7 @@
               <dd class="index__right__bot__item__desc">{{item.desc}}</dd>
               <dd class="index__right__bot__item__img"><img :src="getImg(item.id)" alt=""></dd>
             </dl>
-            <button class="index__right__bot__item__btn">立即购买</button>
+            <router-link tag="button" :to="{name:item.name}" class="index__right__bot__item__btn">立即购买</router-link>
           </div>
         </div>
       </div>
@@ -26,7 +26,7 @@
                 <h3>{{products.title}}</h3>
               </div>
               <ul class="sidebar__content__list">
-                <li v-for="product in products.list" :key="product.title">
+                <li v-for="product in products.list" :key="product.id">
                   <a href="#">{{product.title}}</a>
                   <span v-if="product.hot" class="hot">HOT</span>
                 </li>
@@ -156,6 +156,7 @@ export default {
   color: #fff;
   line-height: 34px;
   margin-left: 140px;
+  cursor:pointer;
 }
 .index-warp__left {
   width: 270px;

@@ -57,11 +57,11 @@ export default {
 .dialog__content {
   position: absolute;
   top: 150px;
-  width: 700px;
+  width: 50%;
   min-height: 100px;
   background: #fff;
   left: 50%;
-  margin-left: -350px;
+  margin-left: -25%;
   border-radius: 5px;
   z-index: 10;
 }
