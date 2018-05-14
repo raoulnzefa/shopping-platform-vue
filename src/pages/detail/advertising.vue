@@ -28,7 +28,7 @@
           <span class="detail-wrap__right__top__form__item__left">总价：</span>
           {{price}}元
         </div>
-        <button class="detail-wrap__right__top__form__btn" @click="">立即购买</button>
+        <button class="detail-wrap__right__top__form__btn" @click="buy">立即购买</button>
       </div>
 
     </div>
@@ -45,6 +45,45 @@
         </table>
       </div>
     </div>
+    <!-- 支付页面 -->
+    <my-dialog v-if="isShowPayDialog" @onclose="closePayDialog">
+      <table class="pay-table">
+        <thead>
+          <tr>
+            <th>购买数量</th>
+            <th>行业</th>
+            <th>其他可选</th>
+            <th>有效时间</th>
+            <th>总价</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{proNum}}</td>
+            <td>{{vocation.label}}</td>
+            <td>
+              <span v-for="(item,index) in otherSel" :key="index">{{index!==0?'、':''}}{{item.label}} </span>
+            </td>
+            <td>{{time}}</td>
+            <td>{{price}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pay-w pay-text">
+        请选择银行
+      </div>
+      <div class="pay-w">
+        <bank-select @on-change="selBank"></bank-select>
+      </div>
+      <div class="pay-w">
+        <button class="pay-btn" @click="confirmBuy">确认购买</button>
+      </div>
+    </my-dialog>
+    <my-dialog v-if="isShowCheckDialog" @onclose="closeCheckDialog">
+      <p>请检查你的支付状态</p>
+      <button>支付成功</button>
+      <button>支付失败</button>
+    </my-dialog>
   </div>
 </template>
 
@@ -52,12 +91,16 @@
 import Amount from '../../components/amount'
 import VSelect from '../../components/vSelect'
 import VMulChoice from '../../components/vMulChoice'
+import MyDialog from '../../components/dialog'
+import BankSelect from '../../components/bankSelect'
 import axios from 'axios'
 export default {
   components: {
     Amount,
     VSelect,
-    VMulChoice
+    VMulChoice,
+    MyDialog,
+    BankSelect
   },
   data () {
     return {
@@ -117,7 +160,12 @@ export default {
         '游戏',
         '运动休闲娱乐',
         '招商加盟'
-      ]
+      ],
+
+      isShowPayDialog: false,
+      isShowCheckDialog: false,
+
+      currentBank: {}
     }
   },
   methods: {
@@ -150,15 +198,19 @@ export default {
         this.getPrice()
       }
     },
-    getPrice () {
+    getReqParams () {
       const otherSelMap = this.otherSel.map(function (val) {
         return val.value
       })
-      const reqParams = {
+      return {
         proNum: this.proNum,
         vocation: this.vocation.value,
-        otherSel: otherSelMap.join(',')
+        otherSel: otherSelMap.join(','),
+        period: this.time
       }
+    },
+    getPrice () {
+      const reqParams = this.getReqParams()
       axios
         .post('api/getPrice', reqParams)
         .then(res => {
@@ -167,6 +219,32 @@ export default {
         .catch(err => {
           console.error(err)
         })
+    },
+    buy () {
+      this.isShowPayDialog = true
+    },
+    selBank (selectedBank) {
+      this.currentBank = selectedBank
+    },
+    confirmBuy () {
+      let reqParams = this.getReqParams()
+      reqParams.bank = this.currentBank.id
+      axios
+        .post('api/confirmBuy')
+        .then(res => {
+          this.buyId = res.data.buyId
+          // this.isShowCheckDialog = true
+          this.isShowPayDialog = false
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
+    closePayDialog () {
+      this.isShowPayDialog = false
+    },
+    closeCheckDialog () {
+      this.isShowCheckDialog = false
     }
   },
   mounted () {
@@ -185,5 +263,36 @@ export default {
 .detail-wrap__right__bot__content td {
   padding: 15px;
   border: 1px solid #e3e3e3;
+}
+/* 支付页面 */
+.pay-table {
+  font-size: 14px;
+  width: 90%;
+  margin: 10px auto 20px;
+  text-align: center;
+}
+.pay-table th {
+  background: #4fc08d;
+  color: #fff;
+  height: 22px;
+  line-height: 22px;
+}
+.pay-table td {
+  border: 1px solid #e3e3e3;
+}
+.pay-w {
+  width: 90%;
+  margin: 0 auto;
+}
+.pay-text {
+  margin-bottom: 10px;
+}
+.pay-btn {
+  background: #4fc08d;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #fff;
+  padding: 10px 20px;
+  cursor: pointer;
 }
 </style>

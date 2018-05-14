@@ -115,6 +115,7 @@ export default {
   height: 34px;
   background: #4fc08d;
   color:#fff;
+  cursor: pointer;
 }
 .detail-wrap__right__bot {
   background: #fff;

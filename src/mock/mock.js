@@ -301,3 +301,7 @@ Mock.mock(/api\/getStatisticsInfo/, {
 
   }
 })
+
+Mock.mock(/api\/confirmBuy/, {
+  buyId: 'adskj34'
+})
