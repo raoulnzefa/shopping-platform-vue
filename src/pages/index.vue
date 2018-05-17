@@ -116,6 +116,7 @@ export default {
 .index-warp__right {
   float: right;
   width: 900px;
+  max-width: 80%;
 }
 
 /* 特色介绍 */
@@ -126,6 +127,8 @@ export default {
   float: left;
   height: 165px;
   width: 440px;
+  max-width: 50%;
+  min-width: 300px;
   background-color: #fff;
 }
 .index__right__bot__item dl {
@@ -160,6 +163,8 @@ export default {
 }
 .index-warp__left {
   width: 270px;
+  float: left;
+  max-width: 20%;
 }
 .index-warp__left__top {
   margin-bottom: 14px;

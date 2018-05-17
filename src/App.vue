@@ -217,6 +217,7 @@ em {
 /* 版心 */
 .w {
   width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
 }
 #app {

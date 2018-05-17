@@ -2,13 +2,13 @@
   <div class="slider-wrap" v-if="slidersInfo" @mouseenter="shopPaly" @mouseleave="autoPaly">
     <div class="slider">
       <transition name="slide">
-        <router-link class="slide-pic-container"  v-if="isShow" :to="{name:slidersInfo[currentIndex].pathName}">
-          <img :src="slidersInfo[currentIndex].imgUrl" alt="">
+        <router-link class="slide-pic-container"  v-if="isShow" :to="{name:slidersInfo[currentIndex].pathName}" tag="img" :src="slidersInfo[currentIndex].imgUrl">
+          <!-- <img :src="slidersInfo[currentIndex].imgUrl" alt=""> -->
         </router-link>
       </transition>
       <transition name="slide-old">
-        <router-link  class="slide-pic-container" v-if="!isShow" :to="{name:slidersInfo[currentIndex].pathName}">
-          <img :src="slidersInfo[currentIndex].imgUrl" alt="">
+        <router-link  class="slide-pic-container" v-if="!isShow" :to="{name:slidersInfo[currentIndex].pathName}" tag="img" :src="slidersInfo[currentIndex].imgUrl">
+          <!-- <img :src="slidersInfo[currentIndex].imgUrl" alt=""> -->
         </router-link>
       </transition>
     </div>
@@ -86,6 +86,7 @@ export default {
   display: block;
   overflow: hidden;
   width: 900px;
+  max-width: 100%;
   height: 500px;
 }
 
@@ -94,6 +95,7 @@ export default {
   top: 0;
   left: 0;
   width: 900px;
+  max-width: 100%;
   height: 500px;
 }
 .slider-wrap .shade {
