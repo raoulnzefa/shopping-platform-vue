@@ -305,3 +305,14 @@ Mock.mock(/api\/getStatisticsInfo/, {
 Mock.mock(/api\/confirmBuy/, {
   buyId: 'adskj34'
 })
+Mock.mock(/api\/verifyPayRes/, function (ops) {
+  console.log('服务器收到的id是：', JSON.parse(ops.body).buyId)
+  if (Math.random() > 0.5) {
+    return {
+      payStatus: true
+    }
+  }
+  return {
+    payStatus: false
+  }
+})

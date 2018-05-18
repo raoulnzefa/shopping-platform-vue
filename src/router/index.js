@@ -6,6 +6,7 @@ import StatisticsPage from '../pages/detail/statistics.vue'
 import ForecastPage from '../pages/detail/forecast.vue'
 import AnalysisPage from '../pages/detail/analysis.vue'
 import AdvertisingPage from '../pages/detail/advertising.vue'
+import orderListPage from '../pages/orderListPage.vue'
 
 Vue.use(Router)
 
@@ -45,6 +46,10 @@ export default new Router({
           component: AdvertisingPage
         }
       ]
+    },
+    {
+      path: '/orderList',
+      component: orderListPage
     }
   ]
 })

@@ -97,6 +97,7 @@ export default {
   width: 900px;
   max-width: 100%;
   height: 500px;
+  cursor: pointer;
 }
 .slider-wrap .shade {
   position: absolute;

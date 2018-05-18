@@ -46,7 +46,7 @@
       </div>
     </div>
     <!-- 支付页面 -->
-    <my-dialog v-if="isShowPayDialog" @onclose="closePayDialog">
+    <my-dialog v-if="isShowPayDialog" @onclose="closePayDialog" key="payDialog">
       <table class="pay-table">
         <thead>
           <tr>
@@ -79,10 +79,15 @@
         <button class="pay-btn" @click="confirmBuy">确认购买</button>
       </div>
     </my-dialog>
-    <my-dialog v-if="isShowCheckDialog" @onclose="closeCheckDialog">
-      <p>请检查你的支付状态</p>
-      <button>支付成功</button>
-      <button>支付失败</button>
+    <!-- 检查支付状态页 -->
+    <my-dialog v-if="isShowCheckDialog" @onclose="closeCheckDialog" key="checkDialog">
+      <p class="check-pay-title">请检查你的支付状态</p>
+      <button class="pay-btn pay-btn-pd" @click="verifyRes">支付成功</button>
+      <button class="pay-btn" @click="verifyRes">支付失败</button>
+    </my-dialog>
+    <!-- 支付成功提示页 -->
+    <my-dialog v-if="isPaySuccess" @onclose="closeCheckDialog" key="paySuccessDialog">
+      <p class="pay-success-tip">支付成功</p>
     </my-dialog>
   </div>
 </template>
@@ -165,7 +170,11 @@ export default {
       isShowPayDialog: false,
       isShowCheckDialog: false,
 
-      currentBank: {}
+      currentBank: {},
+      buyId: null,
+
+      isPaySuccess: false,
+      isPayFail: false
     }
   },
   methods: {
@@ -230,10 +239,10 @@ export default {
       let reqParams = this.getReqParams()
       reqParams.bank = this.currentBank.id
       axios
-        .post('api/confirmBuy')
+        .post('api/confirmBuy', reqParams)
         .then(res => {
           this.buyId = res.data.buyId
-          // this.isShowCheckDialog = true
+          this.isShowCheckDialog = true
           this.isShowPayDialog = false
         })
         .catch(err => {
@@ -245,6 +254,22 @@ export default {
     },
     closeCheckDialog () {
       this.isShowCheckDialog = false
+    },
+    verifyRes () {
+      axios.post('api/verifyPayRes', { buyId: this.buyId }).then(res => {
+        if (res.data.payStatus) {
+          console.log('支付成功')
+          // 隐藏支付状态检查页面，弹出支付成功页面
+          this.isShowCheckDialog = false
+          this.isPaySuccess = true
+          setTimeout(() => {
+            this.isPaySuccess = false
+            this.$router.push({path: '/orderList'})
+          }, 1000)
+        } else {
+          console.log('支付失败')
+        }
+      })
     }
   },
   mounted () {
@@ -294,5 +319,18 @@ export default {
   color: #fff;
   padding: 10px 20px;
   cursor: pointer;
+}
+.pay-btn-pd {
+  margin: 0 20px;
+}
+
+.check-pay-title {
+  font-size: 20px;
+  font-weight: 700;
+  padding: 10px 20px;
+}
+.pay-success-tip {
+  font-size: 18px;
+  padding: 30px 20px 0;
 }
 </style>
