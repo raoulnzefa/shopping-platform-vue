@@ -17,7 +17,7 @@
       <span class="errTxt">{{repsdError1.errTxt}}</span>
       <span class="errTxt">{{repsdError2.errTxt}}</span>
     </div>
-    <button class="reg__btn" @click="regAccount">登录</button>
+    <button class="reg__btn" @click="regAccount">注册</button>
     <span :class="regTipClass">{{regTip}}</span>
   </div>
 </template>
