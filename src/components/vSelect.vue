@@ -56,6 +56,7 @@ export default {
   position: relative;
   font-size: 0;
   text-align: center;
+  background:#fff;
 }
 .select {
   display: inline-block;

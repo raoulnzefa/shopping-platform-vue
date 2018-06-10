@@ -4,86 +4,137 @@
     <div class="filter clearfix">
       <div class="filter-item">
         <span>选择产品：</span>
-        <v-select></v-select>
+        <v-select :selectList="products" @on-change="updateProduct"></v-select>
       </div>
       <div class="filter-item">
         <span>开始日期：</span>
-        <date-picker :date="startTime" :option="option" :limit="limit"></date-picker>
+        <input type="text" id="regular-date" readonly @focus="startDateShow = true" v-model="startDate">
+        <date-picker :max="endDate" color="#E91E63" @close="startDateShow = false" v-if="startDateShow" v-model="startDate">
+        </date-picker>
       </div>
       <div class="filter-item">
-        <span>结束日期:</span>
-        <v-select></v-select>
+        <span>结束日期：</span>
+        <input type="text" id="regular-date" readonly @focus="endDateShow = true" v-model="endDate">
+        <date-picker :min="startDate" color="#E91E63" @close="endDateShow = false" v-if="endDateShow" v-model="endDate">
+        </date-picker>
       </div>
       <div class="filter-item">
         <span>关键词：</span>
-        <v-select></v-select>
+        <input type="text" v-model.lazy="keyQuery">
       </div>
     </div>
-
+    <table>
+      <thead>
+        <tr>
+          <td></td>
+        </tr>
+      </thead>
+    </table>
   </div>
 </template>
 
 <script>
 import VSelect from '../components/vSelect'
-import MyDatepicker from '../components/vDate'
+import DatePicker from '../components/vDate'
+import axios from 'axios'
 export default {
   components: {
     VSelect,
-    'date-picker': MyDatepicker
+    DatePicker
   },
   data () {
     return {
-      startTime: {
-        time: ''
-      },
-      option: {
-        type: 'day',
-        week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-        month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        format: 'YYYY-MM-DD',
-        placeholder: 'when?',
-        inputStyle: {
-          'display': 'inline-block',
-          'padding': '6px',
-          'line-height': '22px',
-          'font-size': '16px',
-          'border': '2px solid #fff',
-          'box-shadow': '0 1px 3px 0 rgba(0, 0, 0, 0.2)',
-          'border-radius': '2px',
-          'color': '#5F5F5F'
+      products: [
+        {
+          label: '数据统计',
+          value: 0
         },
-        color: {
-          header: '#3bb4f2',
-          headerText: '#f00'
+        {
+          label: '数据预测',
+          value: 1
         },
-        buttons: {
-          ok: 'Ok',
-          cancel: 'Cancel'
+        {
+          label: '流量分析',
+          value: 2
         },
-        overlayOpacity: 0.5, // 0.5 as default
-        dismissible: true // as true as default
-      },
-      timeoption: {
-        type: 'min',
-        week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-        month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        format: 'YYYY-MM-DD HH:mm'
-      },
-      multiOption: {
-        type: 'multi-day',
-        week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
-        month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        format: 'YYYY-MM-DD HH:mm'
-      },
-      limit: [{
-        type: 'weekday',
-        available: [1, 2, 3, 4, 5]
-      },
-      {
-        type: 'fromto',
-        from: '2016-02-01',
-        to: '2016-02-20'
-      }]
+        {
+          label: '广告发布',
+          value: 3
+        }
+      ],
+      productId: null,
+      startDateShow: false,
+      startDate: '',
+      endDateShow: false,
+      endDate: '',
+      keyQuery: '',
+      tabHeader: [
+        {
+          name: '订单号',
+          id: 'orderId'
+        },
+        {
+          name: '购买产品',
+          id: 'product'
+        },
+        {
+          name: '版本类型',
+          id: 'version'
+        },
+        {
+          name: '有效时间',
+          id: 'period'
+        },
+        {
+          name: '购买日期',
+          id: 'date'
+        },
+        {
+          name: '数量',
+          id: 'buyNum'
+        },
+        {
+          name: '总价',
+          id: 'amount'
+        }
+      ]
+    }
+  },
+  methods: {
+    updateProduct (product) {
+      this.productId = product.value
+      this.getList()
+    },
+    getList () {
+      console.log(this.productId)
+      console.log(this.startDate)
+      console.log(this.endDate)
+      console.log(this.keyQuery)
+      const params = {
+        productId: this.productId,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        keyQuery: this.keyQuery
+      }
+      axios
+        .get('api/getOrderList', params)
+        .then(res => {
+          console.log(res.data.list)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    }
+  },
+  watch: {
+    startDate (date) {
+      this.getList()
+    },
+    endDate (date) {
+      this.getList()
+    },
+    keyQuery (val) {
+      this.getList()
     }
   }
 }
@@ -91,11 +142,12 @@ export default {
 
 <style scoped>
 .heading {
-  font-size: 20px;
-  font-weight: bold;
   margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 20px;
 }
 .filter-item {
   float: left;
+  margin-right: 20px;
 }
 </style>
